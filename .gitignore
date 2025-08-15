@@ -1,0 +1,4 @@
+.pdm-python
+/__pycache__
+uv.lock
+.python-version
