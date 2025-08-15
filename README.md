@@ -40,13 +40,14 @@ python app.py
 </details>
 
 ## 🖊下一步计划
-1. 添加配置文件   
+1. **添加配置文件**   
 2. 添加一个基于此项目的服务端(他可能只是一个API Caller，或者是一个Websocket服务器？)   
 服务端可以调用多个API，并将其返回的信息进行合并并输出，旨在用于检查不同地区的延迟
 3. 添加是否默认使用 SRV 解析的变量
+4. *等一切尘埃落定后，我会考虑使用 FastAPI*
 
 ## 📞 联系
 
-TG群组：[点此加入](https://t.me/LoveMurasame)
-吹水群：[1049319982](https://qm.qq.com/q/DfTsIDXuc8)
-邮箱：<congyu@sbhfy.cn>
+TG群组：[点此加入](https://t.me/LoveMurasame)   
+吹水群：[1049319982](https://qm.qq.com/q/DfTsIDXuc8)   
+邮箱：<congyu@sbhfy.cn>   
