@@ -38,9 +38,11 @@ def format_bedrock_data(ip, status):
 
     return data
 
+# 格式化根目录的索引数据
+# 可能后面没什么鸟用了，我要上页面
 def format_index():
     message = {
-        "message": "欢迎使用 Minecraft 服务器状态查询 API！",
+        "message": "Ciallo～(∠・ω< )⌒★​ 欢迎使用 Minecraft 服务器状态查询 API！",
         "usage": {
             "JavaStatus": "/java?ip=<IP> - (Required)",
             "BedrockStatus": "/bedrock?ip=<IP> - (Required)"
@@ -49,6 +51,7 @@ def format_index():
 
     return message
 
+# Java 服务器查询参数为空值
 def format_java_index():
     message = {
         "message": "缺少 IP 参数",
@@ -57,6 +60,7 @@ def format_java_index():
 
     return message
 
+# 基岩版服务器查询参数为空值
 def format_bedrock_index():
     message = {
         "message": "缺少 IP 参数",
