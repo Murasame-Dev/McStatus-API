@@ -37,6 +37,16 @@ pdm run app.py
 pip install -r requirements.txt
 python app.py
 ```
+
+</details>
+
+<details open>
+<summary>docker</summary>
+```bash
+docker build -t mcstatus-api .
+docker run --name mcstatus-api -p 8000:8000 -d mcstatus-api
+```
+
 </details>
 
 ## 🖊下一步计划
