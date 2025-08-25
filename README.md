@@ -42,6 +42,7 @@ python app.py
 
 <details open>
 <summary>docker</summary>
+
 ```bash
 docker build -t mcstatus-api .
 docker run --name mcstatus-api -p 8000:8000 -d mcstatus-api
