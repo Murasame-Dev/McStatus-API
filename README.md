@@ -10,7 +10,7 @@
 
 ## 📦安装&▶启动
 
-以下提到的方法 任选**其一** 即可
+以下提到的方法 任选**其一** 即可 （确保你有Python 3.10或以上的环境）
 
 <details open>
 <summary>uv</summary>
@@ -47,6 +47,8 @@ python app.py
 docker build -t mcstatus-api .
 docker run --name mcstatus-api -p 8000:8000 -d mcstatus-api
 ```
+
+或者，你也可以使用这个编译好的镜像：registry.cn-guangzhou.aliyuncs.com/ineko-docker/mcstatus-api:latest
 
 </details>
 
