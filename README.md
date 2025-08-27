@@ -35,6 +35,7 @@ pdm run app.py
 <summary>pip</summary>
 
 ```bash
+# 请确保使用 Python >= 3.13!
 pip install -r requirements.txt
 python app.py
 ```
