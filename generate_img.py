@@ -1,5 +1,7 @@
+# 图片生成模块
 from mc_status_img.get_background import download_image_with_httpx_auto_redirect
 from mc_status_img.create_image import create_image
+from mc_status_img.get_icon import get_icon_image
 
 # Java版查询模块
 from JavaServerStatus import java_status
@@ -10,11 +12,11 @@ from dnslookup import dns_lookup
 # 格式化文本
 from FormatData import format_java_data, format_bedrock_data
 
+# 环境变量
+from config import BACKGROUND_URL, DEFAULT_ICON, FONT_PATH, IMAGE_WIDTH, IMAGE_HEIGHT
+
 import base64
 import asyncio
-
-BACKGROUND_URL = "https://www.loliapi.com/acg/"
-DEFAULT_ICON = "./minecraft-creeper-face.png"
 
 async def get_icon_image(url: str):
     if url.startswith("http"):
@@ -55,20 +57,28 @@ async def generate_java_status_image(addr: str):
         f"players: {data['players']['online']}/{data['players']['max']}",
     ]
 
+    font_url = await get_font_url()
+    
+    image_size = await get_image_size()
+    
     if status.icon:
         image = await loop.run_in_executor(None,
                                            create_image,
                                            background_data,
                                            base64.b64decode(status.icon.split(",")[1]),
                                            text_list,
-                                           motd_list)
+                                           motd_list,
+                                           font_url,
+                                           image_size)
     else:
         image = await loop.run_in_executor(None,
                                            create_image,
                                            background_data,
                                            icon_data,
                                            text_list,
-                                           motd_list)
+                                           motd_list,
+                                           font_url,
+                                           image_size)                
     return image
 
 async def generate_bedrock_status_image(addr: str):
@@ -95,10 +105,40 @@ async def generate_bedrock_status_image(addr: str):
         f"players: {data['players']['online']}/{data['players']['max']}",
     ]
 
+    font_url = await get_font_url()
+    
+    image_size = await get_image_size()
+
     image = await loop.run_in_executor(None,
                                        create_image,
                                        background_data,
                                        icon_data,
                                        text_list,
-                                       motd_list)
+                                       motd_list,
+                                       font_url,
+                                       image_size)
     return image
+
+async def get_background_image():
+    if BACKGROUND_URL.startswith("http://") or BACKGROUND_URL.startswith("https://"):
+        background_data = await download_image_with_httpx_auto_redirect(BACKGROUND_URL)
+    elif BACKGROUND_URL == "":
+        background_data = None
+    else:
+        with open(BACKGROUND_URL, "rb") as f:
+            background_data = f.read()
+    return background_data
+
+async def get_font_url():
+    if not FONT_PATH:
+        font_url = None
+    else:
+        font_url = FONT_PATH
+    return font_url
+
+async def get_image_size():
+    if not IMAGE_WIDTH or not IMAGE_HEIGHT:
+        image_size = [0,0]
+    else:
+        image_size = [IMAGE_WIDTH, IMAGE_HEIGHT]
+    return image_size
