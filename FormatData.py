@@ -68,3 +68,12 @@ def format_bedrock_index():
     }
 
     return message
+
+# 生成服务器状态图片参数为空值
+def format_img_index():
+    message = {
+        "message": "缺少参数或参数错误",
+        "usage": "/img?ip=<IP>&type=<java|bedrock> - (Required)"
+    }
+
+    return message
