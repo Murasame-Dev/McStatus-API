@@ -5,6 +5,7 @@
 # 基础模块
 import asyncio
 import base64
+import uvicorn
 from io import BytesIO
 
 # API
@@ -22,12 +23,7 @@ from dnslookup import dns_lookup
 from FormatData import format_java_data, format_bedrock_data, format_index, format_java_index, format_bedrock_index, format_img_index
 
 # 图片生成模块
-from mcstatus_img.get_background import download_image_with_httpx_auto_redirect
-from mcstatus_img.create_image import create_image
-from mcstatus_img.get_icon import get_icon_image
-
-# 环境变量
-from config import BACKGROUND_URL, DEFAULT_ICON, FONT_PATH, IMAGE_WIDTH, IMAGE_HEIGHT
+from generate_img import get_icon_image, generate_java_status_image, generate_bedrock_status_image, get_background_image
 
 app = FastAPI(
     title="McStatus API",
@@ -98,84 +94,23 @@ async def get_status_image(ip: str = Query(None, description="服务器IP地址�
     
     try:        
         # 背景图获取方法
-        if BACKGROUND_URL.startswith("http://") or BACKGROUND_URL.startswith("https://"):
-            background_data = await download_image_with_httpx_auto_redirect(BACKGROUND_URL)
-        elif BACKGROUND_URL == "none":
-            background_data = None
-        else:
-            with open(BACKGROUND_URL, "rb") as f:
-                background_data = f.read()
-        
-        # 字体设置方法
-        if not FONT_PATH:
-            font_url = None
-        else:
-            font_url = FONT_PATH
-        
-        loop = asyncio.get_event_loop()
-                
+        background_data = await get_background_image()
+                        
         # java 服务器的方法
         if type == "java":
-            ip, type = await loop.run_in_executor(None, dns_lookup, ip)
-            status = await loop.run_in_executor(None, java_status, ip)
-            data = format_java_data(ip, type, status)
-            # JAVA服务器字典
-            text_list = [
-                f"ip: {data['ip']}",
-                f"type: {data['type']}",
-                f"version: {data['version']}",
-                f"latency: {round(data['latency'], 2)} ms",
-                f"players: {data['players']['online']}/{data['players']['max']}",
-            ]
+            image = await generate_java_status_image(ip)
         
         # bedrock 服务器的方法
         if type == "bedrock":
-            status = await loop.run_in_executor(None, bedrock_status, ip)
-            data = format_bedrock_data(ip, status)
-            data['type'] = 'normal'
-            status.icon = None
-            # BE服务器字典
-            text_list = [
-                f"ip: {data['ip']}",
-                f"version: {data['version']}",
-                f"latency: {round(data['latency'], 2)} ms",
-                f"players: {data['players']['online']}/{data['players']['max']}",
-            ]
-            
-        # MOTD信息        
-        motd_list = data['motd'].split("\n")
-        
-        # 图标获取方法
-        if status.icon:
-            icon_data = base64.b64decode(status.icon.split(",")[1])
-        else:
-            icon_data = await get_icon_image(DEFAULT_ICON)
-        
-        # 图片尺寸
-        if not IMAGE_WIDTH or not IMAGE_HEIGHT:
-            image_size = [0,0]
-        else:
-            image_size = [IMAGE_WIDTH, IMAGE_HEIGHT]
-        
-        image = await loop.run_in_executor(None,
-                                            create_image,
-                                            background_data,
-                                            icon_data,
-                                            text_list,
-                                            motd_list,
-                                            font_url,
-                                            image_size)
+            image = await generate_bedrock_status_image(ip)
+
         img_io = BytesIO()
         image.save(img_io, 'JPEG')
         img_io.seek(0)
         return Response(content=img_io.getvalue(), media_type="image/jpeg")
-
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-
-
 if __name__ == '__main__':
-    import uvicorn
     uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)
