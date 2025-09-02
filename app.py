@@ -5,6 +5,7 @@
 # 基础模块
 import asyncio
 import base64
+import uvicorn
 from io import BytesIO
 
 # API
@@ -112,5 +113,4 @@ async def get_status_image(ip: str = Query(None, description="服务器IP地址�
         raise HTTPException(status_code=500, detail=str(e))
     
 if __name__ == '__main__':
-    import uvicorn
     uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)

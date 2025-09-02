@@ -18,6 +18,31 @@ from config import BACKGROUND_URL, DEFAULT_ICON, FONT_PATH, IMAGE_WIDTH, IMAGE_H
 import base64
 import asyncio
 
+async def get_font_url():
+    if not FONT_PATH:
+        font_url = None
+    else:
+        font_url = FONT_PATH
+    return font_url
+
+async def get_image_size():
+    if not IMAGE_WIDTH or not IMAGE_HEIGHT:
+        image_size = [0,0]
+    else:
+        image_size = [IMAGE_WIDTH, IMAGE_HEIGHT]
+    return image_size
+
+async def get_background_image():
+    if BACKGROUND_URL.startswith("http://") or BACKGROUND_URL.startswith("https://"):
+        background_data = await download_image_with_httpx_auto_redirect(BACKGROUND_URL)
+    elif BACKGROUND_URL == "":
+        background_data = None
+    else:
+        with open(BACKGROUND_URL, "rb") as f:
+            background_data = f.read()
+    return background_data
+
+
 async def get_icon_image(url: str):
     if url.startswith("http"):
         icon_data = await download_image_with_httpx_auto_redirect(url)
@@ -118,27 +143,3 @@ async def generate_bedrock_status_image(addr: str):
                                        font_url,
                                        image_size)
     return image
-
-async def get_background_image():
-    if BACKGROUND_URL.startswith("http://") or BACKGROUND_URL.startswith("https://"):
-        background_data = await download_image_with_httpx_auto_redirect(BACKGROUND_URL)
-    elif BACKGROUND_URL == "":
-        background_data = None
-    else:
-        with open(BACKGROUND_URL, "rb") as f:
-            background_data = f.read()
-    return background_data
-
-async def get_font_url():
-    if not FONT_PATH:
-        font_url = None
-    else:
-        font_url = FONT_PATH
-    return font_url
-
-async def get_image_size():
-    if not IMAGE_WIDTH or not IMAGE_HEIGHT:
-        image_size = [0,0]
-    else:
-        image_size = [IMAGE_WIDTH, IMAGE_HEIGHT]
-    return image_size
