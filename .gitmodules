@@ -1,0 +1,3 @@
+[submodule "mcstatus_img"]
+	path = mcstatus_img
+	url = https://github.com/Murasame-Dev/McStatus-Img
