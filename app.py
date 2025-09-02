@@ -107,7 +107,7 @@ async def get_status_image(ip: str = Query(None, description="服务器IP地址�
                 background_data = f.read()
         
         # 字体设置方法
-        if not FONT_PATH or FONT_PATH == "":
+        if not FONT_PATH:
             font_url = None
         else:
             font_url = FONT_PATH
@@ -152,11 +152,11 @@ async def get_status_image(ip: str = Query(None, description="服务器IP地址�
             icon_data = await get_icon_image(DEFAULT_ICON)
         
         # 图片尺寸
-        if not IMAGE_WIDTH == 0 or IMAGE_HEIGHT == 0:
+        if not IMAGE_WIDTH or not IMAGE_HEIGHT:
             image_size = [0,0]
         else:
             image_size = [IMAGE_WIDTH, IMAGE_HEIGHT]
-                
+        
         image = await loop.run_in_executor(None,
                                             create_image,
                                             background_data,
